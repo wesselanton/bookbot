@@ -1,2 +1,3 @@
-# bookbot
-A Python command-line tool that analyzes text files and reports word and character statistics.
+# BookBot
+
+BookBot is a Python command-line application that analyzes text files and generates reports with word counts and character frequency statistics.
