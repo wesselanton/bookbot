@@ -1,3 +1,6 @@
+from collections import Counter
+
+
 def count_words(book_text: str) -> int:
     """
     Counts the number of words in the given book text.
@@ -16,14 +19,7 @@ def count_characters(book_text: str) -> dict[str, int]:
     Args:
         book_text (str): The text of the book.
     """
-    character_count: dict[str, int] = {}
-    for char in book_text:
-        char = char.lower()
-        if char in character_count:
-            character_count[char] += 1
-        else:
-            character_count[char] = 1
-    return character_count
+    return dict(Counter(book_text.lower()))
 
 
 def sort_on(char: tuple[str, int]) -> int:

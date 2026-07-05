@@ -1,55 +1,49 @@
-from stats import chars_dict_to_sorted_list, count_characters, count_words
 import sys
+from typing import Optional, Sequence
+
+from bookbot.cli import parse_args
+from bookbot.reader import get_book_text
+from bookbot.report import print_report
+from bookbot.stats import chars_dict_to_sorted_list, count_characters, count_words
 
 
-def get_book_text(filepath: str) -> str:
+def main(args: Optional[Sequence[str]] = None) -> int:
     """
-    Reads the content of a book from a given file path and returns it as a string.
+    Runs the BookBot command-line application.
 
     Args:
-        filepath (str): The path to the book file.
+        args (Optional[Sequence[str]]): Command-line arguments to parse.
     """
+    cli_args, exit_code = parse_args(args)
+    if cli_args is None:
+        return exit_code
 
-    with open(filepath) as file:
-        return file.read()
+    try:
+        book_text = get_book_text(cli_args.book_path)
+    except OSError as error:
+        print(
+            f"Error: could not read '{cli_args.book_path}': {error.strerror}",
+            file=sys.stderr,
+        )
+        return 1
+    except UnicodeDecodeError:
+        print(
+            f"Error: could not read '{cli_args.book_path}' as UTF-8 text",
+            file=sys.stderr,
+        )
+        return 1
 
-
-def print_report(book_path: str, word_count: int, char_counts_sorted: list[tuple[str, int]]):
-    """
-    Prints a report of the word count and character counts for a given book.
-
-    Args:
-        book_path (str): The path to the book file.
-        word_count (int): The total number of words in the book.
-        char_counts_sorted (list[tuple[str, int]]): A sorted list of tuples containing characters and their counts.
-    """
-    print(f"Report for {book_path}:")
-    print(f"Found {word_count} total words")
-    print("Character counts (sorted):")
-    for char, count in char_counts_sorted:
-        if not char.isalnum():  # Skip non-alphanumeric characters
-            continue
-        print(f"{char}: {count}")
-    print("============= END ===============")
-
-
-def main():
-    """
-    Main function to execute the program.
-    """
-
-    if len(sys.argv) < 2:
-        print("Please provide the path to the book file as a command-line argument. Usage: python3 main.py <path_to_book>")
-        sys.exit(1)
-
-    book_path = sys.argv[1]
-
-    book_text = get_book_text(book_path)
     word_count = count_words(book_text)
     char_counts = count_characters(book_text)
     char_counts_sorted = chars_dict_to_sorted_list(char_counts)
-    print_report(book_path, word_count, char_counts_sorted)
+    print_report(
+        cli_args.book_path,
+        word_count,
+        char_counts_sorted,
+        top=cli_args.top,
+    )
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
