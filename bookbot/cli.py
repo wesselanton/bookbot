@@ -1,7 +1,7 @@
 import argparse
 import sys
 from dataclasses import dataclass
-from typing import Optional, Sequence
+from typing import Optional, Sequence, cast
 
 
 @dataclass(frozen=True)
@@ -24,7 +24,8 @@ def positive_int(value: str) -> int:
     try:
         number = int(value)
     except ValueError as error:
-        raise argparse.ArgumentTypeError("must be a positive integer") from error
+        raise argparse.ArgumentTypeError(
+            "must be a positive integer") from error
 
     if number < 1:
         raise argparse.ArgumentTypeError("must be a positive integer")
@@ -85,7 +86,7 @@ def parse_args(args: Optional[Sequence[str]] = None) -> tuple[Optional[CliArgs],
     except SystemExit as error:
         return None, get_parser_exit_code(error)
 
-    parsed_values = vars(namespace)
+    parsed_values = cast(dict[str, object], vars(namespace))
     book_path_arg: object = parsed_values.get("book_path")
     top_arg: object = parsed_values.get("top")
 

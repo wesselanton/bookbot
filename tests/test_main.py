@@ -3,12 +3,13 @@ import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
+from typing import Sequence
 
 from main import main
 
 
 class MainTest(unittest.TestCase):
-    def run_main(self, args):
+    def run_main(self, args: Sequence[str]) -> tuple[int, str, str]:
         stdout = io.StringIO()
         stderr = io.StringIO()
 
@@ -17,14 +18,14 @@ class MainTest(unittest.TestCase):
 
         return exit_code, stdout.getvalue(), stderr.getvalue()
 
-    def test_main_returns_error_for_missing_file(self):
+    def test_main_returns_error_for_missing_file(self) -> None:
         exit_code, stdout, stderr = self.run_main(["missing.txt"])
 
         self.assertEqual(exit_code, 1)
         self.assertEqual(stdout, "")
         self.assertIn("Error: could not read 'missing.txt'", stderr)
 
-    def test_main_prints_pretty_report_for_utf8_book(self):
+    def test_main_prints_pretty_report_for_utf8_book(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             book_path = Path(temp_dir) / "book.txt"
             book_path.write_text("Hello hello \u00e6 123!", encoding="utf-8")
@@ -52,11 +53,12 @@ class MainTest(unittest.TestCase):
         self.assertNotRegex(table_section, r"(?m)^1\s")
         self.assertNotRegex(table_section, r"(?m)^!\s")
 
-    def test_main_limits_frequency_table_with_top_option(self):
+    def test_main_limits_frequency_table_with_top_option(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             book_path = Path(temp_dir) / "book.txt"
             book_path.write_text("aaa bb c d", encoding="utf-8")
-            exit_code, stdout, stderr = self.run_main([str(book_path), "--top", "2"])
+            exit_code, stdout, stderr = self.run_main(
+                [str(book_path), "--top", "2"])
 
         table_section = stdout.split("Char   Count    Percent", 1)[1]
         table_section = table_section.split("============= END REPORT", 1)[0]

@@ -6,7 +6,7 @@ from bookbot.report import build_report, print_report
 
 
 class ReportTest(unittest.TestCase):
-    def test_build_report_includes_summary_stats(self):
+    def test_build_report_includes_summary_stats(self) -> None:
         report = build_report(
             "book.txt",
             501,
@@ -19,7 +19,7 @@ class ReportTest(unittest.TestCase):
         self.assertIn("Most common letter: a (4)", report)
         self.assertIn("Approx. reading time: 3 minutes", report)
 
-    def test_print_report_formats_large_numbers_and_filters_non_letters(self):
+    def test_print_report_formats_large_numbers_and_filters_non_letters(self) -> None:
         output = io.StringIO()
 
         with redirect_stdout(output):
