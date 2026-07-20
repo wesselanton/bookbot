@@ -4,7 +4,7 @@ from typing import Optional, Sequence
 from bookbot.cli import parse_args
 from bookbot.reader import get_book_text
 from bookbot.report import print_report
-from bookbot.stats import chars_dict_to_sorted_list, count_characters, count_words
+from bookbot.stats import count_characters, count_words
 
 
 def main(args: Optional[Sequence[str]] = None) -> int:
@@ -35,11 +35,10 @@ def main(args: Optional[Sequence[str]] = None) -> int:
 
     word_count = count_words(book_text)
     char_counts = count_characters(book_text)
-    char_counts_sorted = chars_dict_to_sorted_list(char_counts)
     print_report(
         cli_args.book_path,
         word_count,
-        char_counts_sorted,
+        char_counts,
         top=cli_args.top,
     )
     return 0

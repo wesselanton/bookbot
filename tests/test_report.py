@@ -10,7 +10,7 @@ class ReportTest(unittest.TestCase):
         report = build_report(
             "book.txt",
             501,
-            [("a", 4), ("b", 2), ("1", 50), ("!", 10)],
+            {"b": 2, "1": 50, "a": 4, "!": 10},
         )
 
         self.assertIn("Words: 501", report)
@@ -19,6 +19,13 @@ class ReportTest(unittest.TestCase):
         self.assertIn("Most common letter: a (4)", report)
         self.assertIn("Approx. reading time: 3 minutes", report)
 
+    def test_build_report_handles_text_without_letters(self) -> None:
+        report = build_report("book.txt", 2, {"1": 3, "!": 1})
+
+        self.assertIn("Letters analyzed: 0", report)
+        self.assertIn("Unique letters: 0", report)
+        self.assertIn("Most common letter: N/A", report)
+
     def test_print_report_formats_large_numbers_and_filters_non_letters(self) -> None:
         output = io.StringIO()
 
@@ -26,7 +33,7 @@ class ReportTest(unittest.TestCase):
             print_report(
                 "book.txt",
                 1234,
-                [("a", 1000), ("b", 234), ("1", 50), ("!", 10)],
+                {"a": 1000, "b": 234, "1": 50, "!": 10},
             )
 
         report = output.getvalue()

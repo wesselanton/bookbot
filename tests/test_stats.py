@@ -16,6 +16,12 @@ class StatsTest(unittest.TestCase):
             [("b", 5), ("a", 2), ("c", 1)],
         )
 
+    def test_chars_dict_to_sorted_list_breaks_ties_by_character(self) -> None:
+        self.assertEqual(
+            chars_dict_to_sorted_list({"b": 1, "a": 1}),
+            [("a", 1), ("b", 1)],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

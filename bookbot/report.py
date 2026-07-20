@@ -1,4 +1,7 @@
+from collections.abc import Mapping
 from typing import Optional
+
+from bookbot.stats import chars_dict_to_sorted_list
 
 
 WORDS_PER_MINUTE = 250
@@ -23,7 +26,7 @@ def format_reading_time(word_count: int) -> str:
 def build_report(
     book_path: str,
     word_count: int,
-    char_counts_sorted: list[tuple[str, int]],
+    char_counts: Mapping[str, int],
     top: Optional[int] = None,
 ) -> str:
     """
@@ -32,12 +35,12 @@ def build_report(
     Args:
         book_path (str): The path to the book file.
         word_count (int): The total number of words in the book.
-        char_counts_sorted (list[tuple[str, int]]): A sorted list of tuples containing characters and their counts.
+        char_counts (Mapping[str, int]): Counts for each character.
         top (Optional[int]): The maximum number of letters to show in the frequency table.
     """
     letter_counts = [
         (char, count)
-        for char, count in char_counts_sorted
+        for char, count in chars_dict_to_sorted_list(char_counts)
         if char.isalpha()
     ]
     total_letters = sum(count for _, count in letter_counts)
@@ -81,7 +84,7 @@ def build_report(
 def print_report(
     book_path: str,
     word_count: int,
-    char_counts_sorted: list[tuple[str, int]],
+    char_counts: Mapping[str, int],
     top: Optional[int] = None,
 ) -> None:
     """
@@ -90,7 +93,7 @@ def print_report(
     Args:
         book_path (str): The path to the book file.
         word_count (int): The total number of words in the book.
-        char_counts_sorted (list[tuple[str, int]]): A sorted list of tuples containing characters and their counts.
+        char_counts (Mapping[str, int]): Counts for each character.
         top (Optional[int]): The maximum number of letters to show in the frequency table.
     """
-    print(build_report(book_path, word_count, char_counts_sorted, top=top))
+    print(build_report(book_path, word_count, char_counts, top=top))
